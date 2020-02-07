@@ -1,91 +1,39 @@
-import React from "react"
-import { Link, graphql } from "gatsby"
-import Img from "gatsby-image"
-import styled from "styled-components"
+import React from 'react';
+import { graphql, navigate, withPrefix } from 'gatsby'
+import { getUserLangKey } from 'ptz-i18n';
 
-import Bio from "../components/bio"
-import Layout from "../components/layout"
-import SEO from "../components/seo"
-import { rhythm } from "../utils/typography"
+class RedirectIndex extends React.PureComponent {
+  constructor(args) {
+    super(args);
 
-const Post = styled.article`
-  display: flex;
-`
+    // Skip build, Browsers only
+    if (typeof window !== 'undefined') {
+      const { langs, defaultLangKey } = args.data.site.siteMetadata.languages;
+      const langKey = getUserLangKey(langs, defaultLangKey);
+      const homeUrl = withPrefix(`/${langKey}/`);
 
-const PostImage = styled.div`
-  flex: 25%;
-  margin-right: 1rem;
-`
+      navigate(homeUrl);
+    }
+  }
 
-const PostText = styled.div`
-  flex: 75%;
-`
-
-const BlogIndex = ({ data, location }) => {
-  const siteTitle = data.site.siteMetadata.title
-  const posts = data.allContentfulPost.edges
-
-  return (
-    <Layout location={location} title={siteTitle}>
-      <SEO title="All posts" />
-      <Bio />
-      {posts.map(({ node }) => {
-        const title = node.title || node.slug
-        return (
-          <Post key={node.slug}>
-            <header>
-              <PostImage>
-                <Img fluid={node.image.fluid} />
-              </PostImage>
-              <PostText>
-                <h3
-                  style={{
-                    marginBottom: rhythm(1 / 4),
-                  }}
-                >
-                  <Link style={{ boxShadow: `none` }} to={node.slug}>
-                    {title}
-                  </Link>
-                </h3>
-              </PostText>
-            </header>
-            <section>
-              <p
-                dangerouslySetInnerHTML={{
-                  __html: node.subtitle,
-                }}
-              />
-            </section>
-          </Post>
-        )
-      })}
-    </Layout>
-  )
+  render() {
+    // It's recommended to add your SEO solution in here for bots
+    // eg. https://github.com/ahimsayogajp/ahimsayoga-gatsby/blob/master/src/pages/index.js#L22
+    return (<div />);
+  }
 }
 
-export default BlogIndex
+export default RedirectIndex;
 
 export const pageQuery = graphql`
-  query {
-    site {
-      siteMetadata {
-        title
-      }
-    }
-    allContentfulPost {
-      edges {
-        node {
-          title
-          subtitle
-          image {
-            fluid {
-              ...GatsbyContentfulFluid
-            }
-          }
-          author
-          slug
+  query IndexQuery {
+    site{
+      siteMetadata{
+        languages {
+          defaultLangKey
+          langs
         }
       }
     }
   }
-`
+`;

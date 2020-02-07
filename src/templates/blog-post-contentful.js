@@ -53,7 +53,7 @@ const BlogPostContentfulTemplate = ({ data, pageContext, location }) => {
         >
           <li>
             {previous && (
-              <Link to={previous.slug} rel="prev">
+              <Link to={`/${previous.node_local}/${previous.slug}`} rel="prev">
                 ← {previous.title}
               </Link>
             )}
@@ -78,6 +78,10 @@ export const pageQuery = graphql`
     site {
       siteMetadata {
         title
+        languages {
+          defaultLangKey
+          langs
+        }
       }
     }
     contentfulPost( slug: { eq: $slug }) {
@@ -94,6 +98,9 @@ export const pageQuery = graphql`
           html
         }
       }
+      id
+      contentful_id
+      node_locale
     }
   }
 `

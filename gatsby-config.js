@@ -1,4 +1,5 @@
 const dotenv = require('dotenv')
+const languages = require('./src/data/languages');
 
 if (process.env.NODE_ENV !== 'production') {
   dotenv.config()
@@ -13,6 +14,7 @@ module.exports = {
     social: {
       twitter: `joegeringer`,
     },
+    languages
   },
   plugins: [
     {
@@ -92,5 +94,13 @@ module.exports = {
       },
     },    
     `@contentful/gatsby-transformer-contentful-richtext`,
+    {
+      resolve: 'gatsby-plugin-i18n',
+      options: {
+        langKeyForNull: 'any',
+        langKeyDefault: languages.defaultLangKey,
+        useLangKeyLayout: false
+      }
+    },
   ],
 }

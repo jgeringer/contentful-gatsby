@@ -12,6 +12,9 @@ exports.createPages = async ({ graphql, actions }) => {
             node {
               slug
               title
+              id
+              contentful_id
+              node_locale
             }
           }
         }
@@ -27,16 +30,21 @@ exports.createPages = async ({ graphql, actions }) => {
   const posts = result.data.allContentfulPost.edges
 
   posts.forEach((post, index) => {
+    // We need a common ID to cycle between locales.
+    const commonId = post.node.contentful_id
     const previous = index === posts.length - 1 ? null : posts[index + 1].node
     const next = index === 0 ? null : posts[index - 1].node
 
     createPage({
-      path: post.node.slug,
+      // path: post.node.slug,
+      path: `/${post.node.node_local}/${post.node.slug}`,
       component: blogPost,
       context: {
         slug: post.node.slug,
         previous,
         next,
+        id: post.node.id,
+        contentful_id: post.node.contentful_id
       },
     })
   })
