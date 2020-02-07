@@ -9,11 +9,11 @@ import { rhythm, scale } from "../utils/typography"
 
 const BlogPostContentfulTemplate = ({ data, pageContext, location }) => {
   const post = data.contentfulPost
-  const siteTitle = data.site.siteMetadata.title
+  // const siteTitle = data.site.siteMetadata.title
   const { previous, next } = pageContext
 
   return (
-    <Layout location={location} title={siteTitle}>
+    <Layout data={data} location={location}>
       <SEO
         title={post.title}
         description={post.subtitle}

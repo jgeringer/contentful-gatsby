@@ -1,13 +1,42 @@
 import React from "react"
 import { Link } from "gatsby"
-
 import { rhythm, scale } from "../utils/typography"
 
-const Layout = ({ location, title, children }) => {
+import { IntlProvider, addLocaleData } from 'react-intl';
+import Helmet from 'react-helmet'
+import { getCurrentLangKey, getLangs, getUrlForLang } from 'ptz-i18n';
+import 'intl';
+
+import en from 'react-intl/locale-data/en';
+import 'intl/locale-data/jsonp/en';
+import de from 'react-intl/locale-data/de';
+import 'intl/locale-data/jsonp/de';
+
+import PropTypes from 'prop-types'
+import Header from '../components/Header'
+
+// add concatenated locale data
+addLocaleData([...en, ...de]);
+
+const Layout = ({ data, location, title, children }) => {
   const rootPath = `${__PATH_PREFIX__}/`
   let header
 
-  if (location.pathname === rootPath) {
+  // const location = this.props.location;
+  const url = window.location.pathname;
+  const { langs, defaultLangKey } = data.site.siteMetadata.languages;
+  const langKey = getCurrentLangKey(langs, defaultLangKey, url);
+  const homeLink = `/${langKey}/`;
+  const langsMenu = getLangs(langs, langKey, getUrlForLang(homeLink, url));
+
+  // get the appropriate message file based on langKey
+  // at the moment this assumes that langKey will provide us
+  // with the appropriate language code
+  const i18nMessages = require(`../data/messages/${langKey}`);
+
+
+
+  if (location === rootPath) {
     header = (
       <h1
         style={{
@@ -50,22 +79,34 @@ const Layout = ({ location, title, children }) => {
     )
   }
   return (
-    <div
-      style={{
-        marginLeft: `auto`,
-        marginRight: `auto`,
-        maxWidth: rhythm(24),
-        padding: `${rhythm(1.5)} ${rhythm(3 / 4)}`,
-      }}
-    >
-      <header>{header}</header>
-      <main>{children}</main>
-      <footer>
-        © {new Date().getFullYear()}, Built with
-        {` `}
-        <a href="https://www.gatsbyjs.org">Gatsby</a>
-      </footer>
-    </div>
+    <IntlProvider
+        locale={langKey}
+        messages={i18nMessages}
+      >
+      <div
+        style={{
+          marginLeft: `auto`,
+          marginRight: `auto`,
+          maxWidth: rhythm(24),
+          padding: `${rhythm(1.5)} ${rhythm(3 / 4)}`,
+        }}
+      >
+        <Helmet
+            title="Gatsby Default Starter"
+            meta={[
+              { name: 'description', content: 'Sample' },
+              { name: 'keywords', content: 'sample, something' },
+            ]}
+          />
+          <Header langs={langsMenu} />
+        <main>{children}</main>
+        <footer>
+          © {new Date().getFullYear()}, Built with
+          {` `}
+          <a href="https://www.gatsbyjs.org">Gatsby</a>
+        </footer>
+      </div>
+    </IntlProvider>
   )
 }
 

@@ -9,16 +9,15 @@ import SEO from "../components/seo"
 import { rhythm } from "../utils/typography"
 
 const Post = styled.article`
-  display: flex;
+  margin-bottom: 2rem;
 `
 
 const PostImage = styled.div`
-  flex: 25%;
   margin-right: 1rem;
 `
 
 const PostText = styled.div`
-  flex: 75%;
+  
 `
 
 const BlogIndex = ({ data, location }) => {
@@ -26,10 +25,10 @@ const BlogIndex = ({ data, location }) => {
   const posts = data.german.edges
 
   return (
-    <Layout location={location} title={siteTitle}>
+    <Layout data={data} title={siteTitle}>
       <SEO title="All posts" />
-      <h3>de</h3>
-      <Bio />
+      <h3>{window.location.pathname}</h3>
+
       {posts.map(({ node }) => {
         const title = node.title || node.slug
         return (
@@ -41,7 +40,8 @@ const BlogIndex = ({ data, location }) => {
               <PostText>
                 <h3
                   style={{
-                    marginBottom: rhythm(1 / 4),
+                    marginBottom: rhythm(1 / 4), 
+                    marginTop: 0
                   }}
                 >
                   <Link style={{ boxShadow: `none` }} to={`/${node.node_locale}/${node.slug}`}>
@@ -60,6 +60,8 @@ const BlogIndex = ({ data, location }) => {
           </Post>
         )
       })}
+
+      <Bio />
     </Layout>
   )
 }
